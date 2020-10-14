@@ -1,0 +1,3 @@
+include ':andoter-plugin'
+include ':app'
+rootProject.name = "asm-example"
