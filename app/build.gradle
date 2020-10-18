@@ -22,6 +22,12 @@ android {
     }
 }
 
+AndExt {
+    debug = true
+    tryCatch = true
+    printLog = true
+}
+
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
