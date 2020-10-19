@@ -87,3 +87,17 @@ AppExtension appExtension = project.extensions.findByType(AppExtension.class)
 
 - PluginManager getPluginManager()：插件管理器，可用于添加、判断、查找插件
 - 
+
+#### 2.4 Transform
+一个 Transform 就是一个新的 Task，它是通过链式进行执行，即上一个 Transform 的输出作为当前 Transform 的输入，它的输出又作为下一个 Transform 的输入。
+Transform 的输入是用 TransformInput 表示，他包含 JarInput 和 DirectoryInput。输出使用 TransformOutputProvider 标识。
+它提供了以下方法：
+- getName：返回 Transform 的名称
+- applyToVariant(@NonNull VariantInfo variant)：是否处理给定的 variant
+- Set<ContentType> getInputTypes()：处理的输入类型，比如 TransformManager.CONTENT_CLASS（Java 的 Class 文件）、TransformManager.CONTENT_JARS（Java 的资源文件）
+- Set<ContentType> getOutputTypes()：输出的类型
+- Set<? super Scope> getScopes()：Transform 适用的范围，比如 TransformManager.SCOPE_FULL_PROJECT
+- boolean isIncremental()：是否使用增量编译，开启时，文件会区分为 changed/removed/added 三种状态,Status.NOTCHANGED、Status.ADDED
+- boolean isCacheable()：是否使用缓存，即输出的是否要缓存起来
+- transform(@NonNull TransformInvocation transformInvocation)
+              throws TransformException, InterruptedException, IOException
