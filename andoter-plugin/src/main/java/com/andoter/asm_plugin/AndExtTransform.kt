@@ -38,14 +38,12 @@ class AndExtTransform(val appExtension: AppExtension, val andExt: AndExt) : Tran
     }
 
     private fun internalTransform(transformInvocation: TransformInvocation?) {
-        ADLog.info("internalTransform")
         if (transformInvocation != null) {
             transformInvocation.outputProvider.deleteAll()
             for (transformInput in transformInvocation.inputs) {
                 for (jarInput in transformInput.jarInputs) {
                     TransformHelper.transformJars(jarInput, transformInvocation.outputProvider, transformInvocation.isIncremental)
                 }
-
                 for (directoryInput in transformInput.directoryInputs) {
                     TransformHelper.transformDirectory(directoryInput, transformInvocation.outputProvider, transformInvocation.isIncremental)
                 }

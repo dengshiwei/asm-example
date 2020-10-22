@@ -3,10 +3,13 @@ package com.andoter.asm_plugin.utils
 import com.android.build.api.transform.*
 import com.android.utils.FileUtils
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.io.FilenameFilter
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
 import java.util.jar.JarOutputStream
+import java.util.regex.Pattern
 
 object TransformHelper {
     /**
@@ -45,7 +48,7 @@ object TransformHelper {
         val sourceFile = directoryInput.file
         val name = sourceFile.name
         val destDir = outputProvider.getContentLocation(name, directoryInput.contentTypes, directoryInput.scopes, Format.DIRECTORY)
-        ADLog.info("TransformHelper[transformDirectory], name = $name, sourceFile = ${sourceFile.absolutePath}, destFile = ${destDir.absolutePath}, isIncremental = $isIncremental")
+        ADLog.info("TransformHelper[transformDirectory], name = $name, sourceFile Path = ${sourceFile.absolutePath}, destFile Path = ${destDir.absolutePath}, isIncremental = $isIncremental")
         if (isIncremental) {
             val changeFiles = directoryInput.changedFiles
             for (changeFile in changeFiles) {
@@ -64,25 +67,15 @@ object TransformHelper {
                         }
                     }
                     Status.CHANGED, Status.ADDED -> {
-                        if (destFile.exists()) {
-                            destFile.delete()
-                        }
-                        val modifyFile = modifyClassFile(inputFile, destFile)
-                        if (modifyFile != null) {
-                            FileUtils.copyFile(modifyFile, destFile)
-                        } else {
-                            FileUtils.copyFile(inputFile, destFile)
-                        }
+                        handleDirectory(inputFile, destFile)
                     }
                     else -> {}
                 }
             }
         } else {
+            // 首先全部拷贝，防止有后续处理异常导致文件的丢失
             FileUtils.copyDirectory(sourceFile, destDir)
-//            val files = sourceFile.listFiles()
-//            for (file in files!!) {
-//                FileUtils.copyFile(file, File(destDir, file.name))
-//            }
+            handleDirectory(sourceFile, destDir)
         }
     }
 
@@ -115,7 +108,7 @@ object TransformHelper {
             if (modifyClassBytes != null) {
                 jarOutputStream.write(modifyClassBytes)
             } else {
-                jarOutputStream.write(destClassBytes)
+                jarOutputStream.write(destClassBytes!!)
             }
             jarOutputStream.flush()
             jarOutputStream.closeEntry()
@@ -124,6 +117,31 @@ object TransformHelper {
         modifyJar.close()
     }
 
+    private fun handleDirectory(sourceFile: File, destDir: File) {
+        val files = sourceFile.listFiles { file, name ->
+            if (file != null && file.isDirectory) {
+                true
+            } else {
+                name!!.endsWith(".class")
+            }
+        }
+
+        for (file in files!!) {
+            val destFile = File(destDir, file.name)
+            if (file.isDirectory) {
+                handleDirectory(file, destFile)
+            } else {
+                val fileInputStream = FileInputStream(file)
+                val sourceBytes = IOUtils.readBytes(fileInputStream)
+                val modifyBytes = modifyClass(sourceBytes!!)
+                if (modifyBytes != null) {
+                    val destPath = destFile.absolutePath
+                    destFile.delete()
+                    IOUtils.byte2File(destPath, modifyBytes)
+                }
+            }
+        }
+    }
 
     private fun modifyClass(sourceBytes: ByteArray): ByteArray? {
         try {
@@ -131,10 +149,6 @@ object TransformHelper {
         } catch (exception: Exception) {
             ADLog.info("modify class exception = ${exception.message}")
         }
-        return null
-    }
-
-    private fun modifyClassFile(inputFile: File, destDir: File): File? {
         return null
     }
 }
