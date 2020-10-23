@@ -1,7 +1,11 @@
 package com.andoter.asm_plugin.utils
 
+import com.andoter.asm_plugin.visitor.AndoterClassVisitor
 import com.android.build.api.transform.*
 import com.android.utils.FileUtils
+import org.objectweb.asm.ClassReader
+import org.objectweb.asm.ClassWriter
+import org.objectweb.asm.Opcodes
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -145,7 +149,10 @@ object TransformHelper {
 
     private fun modifyClass(sourceBytes: ByteArray): ByteArray? {
         try {
-
+            val classReader = ClassReader(sourceBytes)
+            val classWriter = ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
+            val classVisitor = AndoterClassVisitor(Opcodes.ASM8, classWriter)
+            classReader.accept(classVisitor, ClassReader.SKIP_DEBUG)
         } catch (exception: Exception) {
             ADLog.info("modify class exception = ${exception.message}")
         }
