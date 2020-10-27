@@ -3,7 +3,7 @@ package com.andoter.asm_plugin.utils
 import java.io.*
 import java.lang.Exception
 
-object IOUtils {
+internal object IOUtils {
 
     fun readBytes(inputStream:InputStream): ByteArray? {
         val byteArrayOutputStream = ByteArrayOutputStream()

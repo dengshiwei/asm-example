@@ -1,12 +1,20 @@
 package com.andoter.asm_plugin.visitor
 
-import com.andoter.asm_plugin.utils.ADLog
-import com.andoter.asm_plugin.utils.AccessCodeUtils
+import com.andoter.asm_plugin.AndExt
+import com.andoter.asm_plugin.visitor.cv.AndExtensionInterceptor
 import org.objectweb.asm.*
 
-class AndoterClassVisitor(api: Int, classWriter: ClassWriter) : ClassVisitor(api, classWriter){
+internal class BaseClassVisitor(api: Int, classWriter: ClassWriter, andExt: AndExt?) : ClassVisitor(api, classWriter){
+    private var classInterceptors = mutableListOf<BaseClassInterceptor>()
+
+    init {
+        classInterceptors[0] = AndExtensionInterceptor(api, classWriter, andExt!!)
+    }
 
     override fun visitMethod(access: Int, name: String?, descriptor: String?, signature: String?, exceptions: Array<out String>?): MethodVisitor {
+        for (interceptor in classInterceptors) {
+            interceptor.visitMethod(access, name, descriptor, signature, exceptions)
+        }
         return super.visitMethod(access, name, descriptor, signature, exceptions)
     }
 
@@ -32,7 +40,9 @@ class AndoterClassVisitor(api: Int, classWriter: ClassWriter) : ClassVisitor(api
 
     override fun visit(version: Int, access: Int, name: String?, signature: String?, superName: String?, interfaces: Array<out String>?) {
         super.visit(version, access, name, signature, superName, interfaces)
-        ADLog.info("开始访问【类】，name = $name, superName = $superName, version = $version, access = ${AccessCodeUtils.accessCode2String(access)}")
+        for (interceptor in classInterceptors) {
+            interceptor.visit(version, access, name, signature, superName, interfaces)
+        }
     }
 
     override fun visitNestMember(nestMember: String?) {
@@ -49,10 +59,15 @@ class AndoterClassVisitor(api: Int, classWriter: ClassWriter) : ClassVisitor(api
 
     override fun visitEnd() {
         super.visitEnd()
-        ADLog.info("结束访问类")
+        for (interceptor in classInterceptors) {
+            interceptor.visitEnd()
+        }
     }
 
     override fun visitAnnotation(descriptor: String?, visible: Boolean): AnnotationVisitor {
+        for (interceptor in classInterceptors) {
+            interceptor.visitAnnotation(descriptor, visible)
+        }
         return super.visitAnnotation(descriptor, visible)
     }
 

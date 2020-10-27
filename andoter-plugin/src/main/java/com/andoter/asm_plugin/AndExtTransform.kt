@@ -6,7 +6,7 @@ import com.android.build.api.transform.*
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.internal.pipeline.TransformManager
 
-class AndExtTransform(val appExtension: AppExtension, val andExt: AndExt) : Transform() {
+class AndExtTransform(val appExtension: AppExtension, private val andExt: AndExt) : Transform() {
 
     override fun getName(): String {
         return "AndPlugin"
@@ -35,6 +35,12 @@ class AndExtTransform(val appExtension: AppExtension, val andExt: AndExt) : Tran
     private fun beforeTransform() {
         ADLog.info("Andoter Plugin Config {debug =  ${andExt.debug}, tryCatch = ${andExt.tryCatch}, " +
                 "printLog = ${andExt.printLog}, methodTrace = ${andExt.methodTrace} }")
+        val ext = AndExt()
+        ADLog.debug = andExt.debug
+        ext.methodTrace = andExt.methodTrace
+        ext.tryCatch = andExt.tryCatch
+        ext.printLog = andExt.printLog
+        TransformHelper.andExt = ext
     }
 
     private fun internalTransform(transformInvocation: TransformInvocation?) {

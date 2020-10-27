@@ -1,6 +1,7 @@
 package com.andoter.asm_plugin.utils
 
-import com.andoter.asm_plugin.visitor.AndoterClassVisitor
+import com.andoter.asm_plugin.AndExt
+import com.andoter.asm_plugin.visitor.BaseClassVisitor
 import com.android.build.api.transform.*
 import com.android.utils.FileUtils
 import org.objectweb.asm.ClassReader
@@ -9,13 +10,14 @@ import org.objectweb.asm.Opcodes
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.io.FilenameFilter
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
 import java.util.jar.JarOutputStream
-import java.util.regex.Pattern
 
-object TransformHelper {
+internal object TransformHelper {
+    // 配置信息
+    var andExt: AndExt? = null
+
     /**
      * 遍历处理 Jar
      */
@@ -151,7 +153,7 @@ object TransformHelper {
         try {
             val classReader = ClassReader(sourceBytes)
             val classWriter = ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
-            val classVisitor = AndoterClassVisitor(Opcodes.ASM8, classWriter)
+            val classVisitor = BaseClassVisitor(Opcodes.ASM8, classWriter, andExt)
             classReader.accept(classVisitor, ClassReader.SKIP_DEBUG)
         } catch (exception: Exception) {
             ADLog.info("modify class exception = ${exception.message}")

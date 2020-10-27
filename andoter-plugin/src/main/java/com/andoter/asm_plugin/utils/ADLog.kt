@@ -1,6 +1,6 @@
 package com.andoter.asm_plugin.utils
 
-object ADLog {
+internal object ADLog {
     private const val TAG = "Andoter"
     var debug = false
 
@@ -20,6 +20,7 @@ object ADLog {
      */
     fun info(info: String) {
         try {
+            if (debug)
             println("${LogUI.INFO.value}[$TAG]:$info${LogUI.END.value}")
         } catch (ex: Exception) {
             ex.printStackTrace()
