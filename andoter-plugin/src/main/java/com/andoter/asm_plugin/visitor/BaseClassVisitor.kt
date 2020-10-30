@@ -5,17 +5,16 @@ import com.andoter.asm_plugin.visitor.cv.AndExtensionInterceptor
 import org.objectweb.asm.*
 
 internal class BaseClassVisitor(api: Int, classWriter: ClassWriter, andExt: AndExt?) : ClassVisitor(api, classWriter){
-    private var classInterceptors = mutableListOf<BaseClassInterceptor>()
-
-    init {
-        classInterceptors[0] = AndExtensionInterceptor(api, classWriter, andExt!!)
-    }
+    private var classInterceptors = mutableListOf<BaseClassInterceptor>(
+            AndExtensionInterceptor(api, classWriter, andExt!!)
+    )
 
     override fun visitMethod(access: Int, name: String?, descriptor: String?, signature: String?, exceptions: Array<out String>?): MethodVisitor {
+        var methodVisitor = super.visitMethod(access, name, descriptor, signature, exceptions)
         for (interceptor in classInterceptors) {
-            interceptor.visitMethod(access, name, descriptor, signature, exceptions)
+            methodVisitor = interceptor.visitMethod(access, name, descriptor, signature, exceptions)
         }
-        return super.visitMethod(access, name, descriptor, signature, exceptions)
+        return methodVisitor
     }
 
     override fun visitModule(name: String?, access: Int, version: String?): ModuleVisitor {

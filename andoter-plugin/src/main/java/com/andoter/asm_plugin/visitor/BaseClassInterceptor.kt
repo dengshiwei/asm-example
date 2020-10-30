@@ -10,8 +10,6 @@ open class BaseClassInterceptor(api: Int, classVisitor: ClassVisitor?) : ClassVi
     private var className: String? = ""
     private var signature: String? = ""
     private var superName: String? = ""
-    // Method 拦截处理
-    private var methodInterceptors = mutableListOf<BaseMethodInterceptor>()
 
     override fun visit(version: Int, access: Int, name: String?, signature: String?, superName: String?, interfaces: Array<out String>?) {
         super.visit(version, access, name, signature, superName, interfaces)
@@ -19,15 +17,6 @@ open class BaseClassInterceptor(api: Int, classVisitor: ClassVisitor?) : ClassVi
         this.className = name
         this.signature = signature
         this.superName = superName
-    }
-
-
-    override fun visitField(access: Int, name: String?, descriptor: String?, signature: String?, value: Any?): FieldVisitor {
-        return super.visitField(access, name, descriptor, signature, value)
-    }
-
-    override fun visitMethod(access: Int, name: String?, descriptor: String?, signature: String?, exceptions: Array<out String>?): MethodVisitor {
-        return super.visitMethod(access, name, descriptor, signature, exceptions)
     }
 
     override fun visitEnd() {

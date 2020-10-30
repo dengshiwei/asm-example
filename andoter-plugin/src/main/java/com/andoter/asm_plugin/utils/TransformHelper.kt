@@ -107,7 +107,7 @@ internal object TransformHelper {
             jarOutputStream.putNextEntry(tempEntry)
             var modifyClassBytes: ByteArray? = null
             val destClassBytes = IOUtils.readBytes(inputStream)
-            if (!jarEntry.isDirectory && entryName.endsWith(".class")) {
+            if (!jarEntry.isDirectory && entryName.endsWith(".class") && !entryName.startsWith("android")) {
                 modifyClassBytes = destClassBytes?.let { modifyClass(it) }
             }
 
@@ -156,7 +156,7 @@ internal object TransformHelper {
             val classVisitor = BaseClassVisitor(Opcodes.ASM8, classWriter, andExt)
             classReader.accept(classVisitor, ClassReader.SKIP_DEBUG)
         } catch (exception: Exception) {
-            ADLog.info("modify class exception = ${exception.message}")
+            ADLog.info("modify class exception = ${exception.printStackTrace()}")
         }
         return null
     }
