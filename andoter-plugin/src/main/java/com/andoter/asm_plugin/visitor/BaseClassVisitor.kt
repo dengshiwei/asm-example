@@ -39,6 +39,7 @@ internal class BaseClassVisitor(api: Int, classWriter: ClassWriter, andExt: AndE
 
     override fun visit(version: Int, access: Int, name: String?, signature: String?, superName: String?, interfaces: Array<out String>?) {
         super.visit(version, access, name, signature, superName, interfaces)
+        if ("<init>" == name) return
         for (interceptor in classInterceptors) {
             interceptor.visit(version, access, name, signature, superName, interfaces)
         }

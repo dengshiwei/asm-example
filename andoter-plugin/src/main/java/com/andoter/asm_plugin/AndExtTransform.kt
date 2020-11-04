@@ -33,14 +33,14 @@ class AndExtTransform(val appExtension: AppExtension, private val andExt: AndExt
     }
 
     private fun beforeTransform() {
-        ADLog.info("Andoter Plugin Config {debug =  ${andExt.debug}, tryCatch = ${andExt.tryCatch}, " +
-                "printLog = ${andExt.printLog}, methodTrace = ${andExt.methodTrace} }")
         val ext = AndExt()
         ADLog.debug = andExt.debug
         ext.methodTrace = andExt.methodTrace
         ext.tryCatch = andExt.tryCatch
         ext.printLog = andExt.printLog
         TransformHelper.andExt = ext
+        ADLog.info("Andoter Plugin Config {debug =  ${andExt.debug}, tryCatch = ${andExt.tryCatch}, " +
+                "printLog = ${andExt.printLog}, methodTrace = ${andExt.methodTrace} }")
     }
 
     private fun internalTransform(transformInvocation: TransformInvocation?) {

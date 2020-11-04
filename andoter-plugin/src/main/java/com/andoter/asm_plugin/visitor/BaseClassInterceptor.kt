@@ -7,7 +7,7 @@ import org.objectweb.asm.FieldVisitor
 import org.objectweb.asm.MethodVisitor
 
 open class BaseClassInterceptor(api: Int, classVisitor: ClassVisitor?) : ClassVisitor(api, classVisitor) {
-    private var className: String? = ""
+    protected var className: String? = ""
     private var signature: String? = ""
     private var superName: String? = ""
 
