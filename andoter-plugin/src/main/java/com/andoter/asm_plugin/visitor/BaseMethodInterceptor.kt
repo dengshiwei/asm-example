@@ -14,13 +14,8 @@ open class BaseMethodInterceptor(methodVisitor: MethodVisitor?, access: Int, nam
         ADLog.info("开始访问方法： name = $name, access = ${AccessCodeUtils.accessCode2String(access)}, descriptor = $descriptor")
     }
 
-    override fun onMethodEnter() {
-        super.onMethodEnter()
-    }
-
-    override fun onMethodExit(opcode: Int) {
-        super.onMethodExit(opcode)
+    override fun visitEnd() {
+        super.visitEnd()
         ADLog.info("方法访问结束")
     }
-
 }

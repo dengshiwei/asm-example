@@ -1,7 +1,7 @@
 package com.andoter.asm_plugin.utils
 
 import com.andoter.asm_plugin.AndExt
-import com.andoter.asm_plugin.visitor.BaseClassVisitor
+import com.andoter.asm_plugin.visitor.cv.AndExtensionInterceptor
 import com.android.build.api.transform.*
 import com.android.utils.FileUtils
 import org.objectweb.asm.ClassReader
@@ -133,18 +133,22 @@ internal object TransformHelper {
         }
 
         for (file in files!!) {
-            val destFile = File(destDir, file.name)
-            if (file.isDirectory) {
-                handleDirectory(file, destFile)
-            } else {
-                val fileInputStream = FileInputStream(file)
-                val sourceBytes = IOUtils.readBytes(fileInputStream)
-                val modifyBytes = modifyClass(sourceBytes!!)
-                if (modifyBytes != null) {
-                    val destPath = destFile.absolutePath
-                    destFile.delete()
-                    IOUtils.byte2File(destPath, modifyBytes)
+            try {
+                val destFile = File(destDir, file.name)
+                if (file.isDirectory) {
+                    handleDirectory(file, destFile)
+                } else {
+                    val fileInputStream = FileInputStream(file)
+                    val sourceBytes = IOUtils.readBytes(fileInputStream)
+                    val modifyBytes = modifyClass(sourceBytes!!)
+                    if (modifyBytes != null) {
+                        val destPath = destFile.absolutePath
+                        destFile.delete()
+                        IOUtils.byte2File(destPath, modifyBytes)
+                    }
                 }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
         }
     }
@@ -153,8 +157,9 @@ internal object TransformHelper {
         try {
             val classReader = ClassReader(sourceBytes)
             val classWriter = ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
-            val classVisitor = BaseClassVisitor(Opcodes.ASM8, classWriter, andExt)
+            val classVisitor = AndExtensionInterceptor(Opcodes.ASM8, classWriter, andExt!!)
             classReader.accept(classVisitor, ClassReader.SKIP_DEBUG)
+            return classWriter.toByteArray()
         } catch (exception: Exception) {
             ADLog.info("modify class exception = ${exception.printStackTrace()}")
         }
