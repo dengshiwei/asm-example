@@ -157,7 +157,7 @@ internal object TransformHelper {
         try {
             val classReader = ClassReader(sourceBytes)
             val classWriter = ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
-            val classVisitor = AndExtensionInterceptor(Opcodes.ASM8, classWriter, andExt!!)
+            val classVisitor = AndExtensionInterceptor(Opcodes.ASM8, classWriter, andExt)
             classReader.accept(classVisitor, ClassReader.SKIP_DEBUG)
             return classWriter.toByteArray()
         } catch (exception: Exception) {
