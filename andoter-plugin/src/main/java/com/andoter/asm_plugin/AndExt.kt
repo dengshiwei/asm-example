@@ -5,4 +5,5 @@ open class AndExt {
     var tryCatch = false
     var printLog = false
     var methodTrace = false
+    var deleteLog = false
 }
