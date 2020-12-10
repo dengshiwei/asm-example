@@ -15,7 +15,7 @@ object ClassOutputUtil {
         val inputStream = ByteArrayInputStream(sourceByte)
         val outputStream = FileOutputStream(file)
         val buffer = ByteArray(1024)
-        var len = 0
+        var len: Int
         while (inputStream.read(buffer).apply { len = this } != -1) {
             outputStream.write(buffer, 0, len)
         }
