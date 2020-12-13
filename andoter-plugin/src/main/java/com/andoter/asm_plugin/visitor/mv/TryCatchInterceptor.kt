@@ -24,7 +24,7 @@ class TryCatchInterceptor(methodVisitor: MethodVisitor, access: Int, name: Strin
         mv.visitLabel(labelEnd)
         // 定义 catch 块开始的位置
         mv.visitLabel(labelTarget)
-        val local1 = newLocal(Type.getType("Ljava/lang/Exception"))
+        val local1 = newLocal(Type.getType("Ljava/lang/Exception;"))
         mv.visitVarInsn(Opcodes.ASTORE, local1)
         mv.visitVarInsn(Opcodes.ALOAD, local1)
         // 输出 ex.printStackTrace
