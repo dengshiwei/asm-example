@@ -140,7 +140,10 @@ internal object TransformHelper {
                 } else {
                     val fileInputStream = FileInputStream(file)
                     val sourceBytes = IOUtils.readBytes(fileInputStream)
-                    val modifyBytes = modifyClass(sourceBytes!!)
+                    var modifyBytes: ByteArray? = null
+                    if (!file.name.contains("BuildConfig")) {
+                        modifyBytes = modifyClass(sourceBytes!!)
+                    }
                     if (modifyBytes != null) {
                         val destPath = destFile.absolutePath
                         destFile.delete()
