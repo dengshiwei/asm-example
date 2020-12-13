@@ -13,8 +13,9 @@ class TryCatchInterceptor(methodVisitor: MethodVisitor, access: Int, name: Strin
     private val labelEnd = Label()
     private val labelTarget = Label()
     override fun onMethodEnter() {
-        mv.visitLabel(labelStart)
         // 定义开始位置
+        mv.visitLabel(labelStart)
+        // 开始 try...catch 块
         mv.visitTryCatchBlock(labelStart, labelEnd, labelTarget, "java/lang/Exception")
     }
 
