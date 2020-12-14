@@ -25,6 +25,7 @@ android {
 AndExt {
     debug = true
     tryCatch = true
+    printLog = true
     deleteLog = false
 }
 
