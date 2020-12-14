@@ -1,4 +1,3 @@
-⚽️ ASM 的简单案例使用
 ### ASM 字节码增强技术—给所有方法添加日志和异常捕捉
 
 在 [AOP 利器 ASM 基础入门](https://juejin.cn/post/6877925000045658119) 博文中，介绍了 `ASM` 的基础知识和整体 `API` 结构，让我们对 `ASM` 有一个初步的认识。本篇博文将介绍三个案例来加深对 `ASM` 接口的理解。
@@ -19,7 +18,7 @@
 
 一个 `Transform` 就是一个新的 `Task`，它是通过链式进行执行，即上一个 `Transform` 的输出作为当前 `Transform` 的输入，它的输出又作为下一个 `Transform` 的输入。`Transform` 的输入是用 `TransformInput` 表示，包含 `JarInput` 和 `DirectoryInput`，输出使用 `TransformOutputProvider` 表示。
 
-![./transform.png](./doc/transform.jpeg)
+![./transform.png](./transform.jpeg)
 
 ##### 1.2 自定义插件
 
@@ -241,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
 - `ASMified` ：表示使用 `ASM` 框架生成字节码时对应的代码
 - `Groovified` ：对应的是 `.class` 字节码指令
 
-![asm_outline](./doc/asm_outline.png)
+![asm_outline](./asm_outline.png)
 
 #### 5. 总结
 
