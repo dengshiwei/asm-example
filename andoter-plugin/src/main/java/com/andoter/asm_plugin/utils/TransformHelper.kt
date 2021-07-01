@@ -63,7 +63,7 @@ internal object TransformHelper {
                 val destPath = inputFile.absolutePath.replace(sourceFile.absolutePath, destDir.absolutePath)
                 val destFile = File(destPath)
                 ADLog.info("目录：$destPath，状态：$status")
-                when(status) {
+                when (status) {
                     Status.NOTCHANGED -> {
 
                     }
@@ -75,7 +75,8 @@ internal object TransformHelper {
                     Status.CHANGED, Status.ADDED -> {
                         handleDirectory(inputFile, destFile)
                     }
-                    else -> {}
+                    else -> {
+                    }
                 }
             }
         } else {
@@ -85,7 +86,7 @@ internal object TransformHelper {
         }
     }
 
-    private fun handleJarFile(jarInput: JarInput,destFile: File) {
+    private fun handleJarFile(jarInput: JarInput, destFile: File) {
         // 空的 jar 包不进行处理
         if (jarInput.file == null || jarInput.file.length() == 0L) {
             ADLog.info("handleJarFile, ${jarInput.file.absolutePath} is null")
@@ -124,8 +125,9 @@ internal object TransformHelper {
     }
 
     private fun handleDirectory(sourceFile: File, destDir: File) {
-        val files = sourceFile.listFiles { file, name ->
-            if (file != null && file.isDirectory) {
+        val files = sourceFile.listFiles { dir, name ->
+            val realFile = File(dir, name)
+            if (realFile.isDirectory) {
                 true
             } else {
                 name!!.endsWith(".class")
